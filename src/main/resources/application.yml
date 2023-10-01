@@ -9,10 +9,12 @@ spring:
   jpa:
     generate-ddl: true
   datasource:
-    url: jdbc:postgresql://localhost:5432/account
+    url: jdbc:postgresql://localhost:5432/account-db
     username: postgres
-    password: test
+    password: postgres
     driver-class-name: org.postgresql.Driver
+  flyway:
+    locations: classpath:db/migration
 eureka:
   client:
     service-url:

@@ -1,6 +1,18 @@
-FROM eclipse-temurin:17-jre-alpine
+FROM gradle:jdk17-alpine as builder
 
 WORKDIR /app
-COPY . /app
 
-CMD ["java", "-jar", "build/libs/account-service-0.0.1-SNAPSHOT-plain.jar"]
+COPY build.gradle /app
+COPY settings.gradle /app
+COPY src /app/src
+
+RUN gradle clean build
+
+
+FROM eclipse-temurin:17-alpine
+
+WORKDIR /app
+
+COPY --from=builder /app/build/libs/account-service.jar /app/app.jar
+
+CMD ["java", "-jar", "app.jar"]
