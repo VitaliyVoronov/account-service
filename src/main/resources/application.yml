@@ -5,7 +5,7 @@ spring:
     name: account-service
   devtools:
     restart:
-      enabled: true
+      enabled: false
   jpa:
     generate-ddl: true
   datasource:
