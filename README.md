@@ -1,7 +1,6 @@
-# account service
+# Account service
 
-Java Spring boot service
-Account service for managing users and user's accounts
+service for managing users and user's accounts
 
 ## Intro
 

@@ -24,7 +24,7 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
     @Column(nullable = false, unique = true)
-    private String userId;
+    private String userPublicId;
     @Column(nullable = false, unique = true)
     private String encryptedPassword;
 }
