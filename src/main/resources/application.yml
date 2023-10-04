@@ -24,3 +24,7 @@ eureka:
 
 gateway:
   ip: 192.168.0.52
+  
+token:
+  expiration: 3600
+  secret: YpcsRt8PqgD5wevhPwVBcBjDgtDXa4cumnHF9ukYMVhW5wfmWzZTvSChTCYuxt
