@@ -6,6 +6,7 @@ import com.game.slot.account.service.UserService;
 import com.game.slot.account.shared.dto.UserDto;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +28,7 @@ public class UserController {
         return HttpStatus.OK;
     }
 
-    @PostMapping("/user")
+    @PostMapping
     public ResponseEntity<CreateUserResponseModel> createUser(@Valid @RequestBody CreateUserRequestModel userRequestDto) {
         UserDto createdUser = userService.createUser(modelMapper.map(userRequestDto, UserDto.class));
         return ResponseEntity.status(HttpStatus.CREATED).body(modelMapper.map(createdUser, CreateUserResponseModel.class));
