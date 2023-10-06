@@ -6,7 +6,7 @@ import com.game.slot.account.service.UserService;
 import com.game.slot.account.shared.dto.UserDto;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
-import org.springframework.context.annotation.DependsOn;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,15 +17,17 @@ public class UserController {
 
     private final UserService userService;
     private final ModelMapper modelMapper;
+    private final Environment environment;
 
-    public UserController(UserService userService, ModelMapper modelMapper) {
+    public UserController(UserService userService, ModelMapper modelMapper, Environment environment) {
         this.userService = userService;
         this.modelMapper = modelMapper;
+        this.environment = environment;
     }
 
     @GetMapping("/status")
-    public HttpStatus status() {
-        return HttpStatus.OK;
+    public ResponseEntity status() {
+        return ResponseEntity.status(HttpStatus.OK).body("Working on port # " +  environment.getProperty("local.server.port"));
     }
 
     @PostMapping

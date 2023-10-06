@@ -44,9 +44,11 @@ public class SecurityConfig {
         AuthenticationManager authenticationManager = authenticationManagerBuilder.build();
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
-//                        .requestMatchers(HttpMethod.POST, "/**").permitAll().anyRequest().authenticated())
+//                        .requestMatchers(HttpMethod.GET, "/users/status").permitAll().anyRequest().authenticated()
                         .requestMatchers(HttpMethod.POST, "/**")
                         .access(new WebExpressionAuthorizationManager("hasIpAddress('" + allowedIp + "')")))
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers(HttpMethod.GET, "/users/status").permitAll().anyRequest().authenticated())
                 .addFilter(new AuthenticationFilter(authenticationManager, environment, userService))
                 .authenticationManager(authenticationManager)
                 .sessionManagement(session -> session

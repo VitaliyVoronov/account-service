@@ -1,13 +1,11 @@
 package com.game.slot.account.security;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.game.slot.account.controller.model.LoginRequestModel;
 import com.game.slot.account.service.UserService;
 import com.game.slot.account.shared.dto.UserDto;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,7 +30,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final Environment environment;
 
     private final UserService userService;
-    
+
     public AuthenticationFilter(AuthenticationManager authenticationManager, Environment environment, UserService userService) {
         super(authenticationManager);
         this.environment = environment;
@@ -54,22 +52,19 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     }
 
     @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, 
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
                                             Authentication authResult) throws IOException, ServletException {
-        String expirationTimeSec = environment.getProperty("token.expiration");
+        String expirationTime = environment.getProperty("token.expiration");
         String tokenSecret = environment.getProperty("token.secret");
-        log.info("Successful authentication with expirationTimeSec: {} and tokenSecret: {}", expirationTimeSec , tokenSecret);
-        String username = ((User)authResult.getPrincipal()).getUsername();
+        log.info("Successful authentication with expirationTimeSec: {} and tokenSecret: {}", expirationTime, tokenSecret);
+        String username = ((User) authResult.getPrincipal()).getUsername();
         UserDto userDetails = userService.getUserDetailsByEmail(username);
         Instant now = Instant.now();
-        String jwtToken = Jwts.builder()
-                .setSubject(userDetails.getEmail())
-                .setExpiration(Date.from(now.plusSeconds(Long.parseLong(expirationTimeSec))))
-                .setIssuedAt(Date.from(now))
-                .signWith(Keys.hmacShaKeyFor(Decoders.BASE64.decode(tokenSecret)), SignatureAlgorithm.HS256)
-                .compact();
-        
-        
+        String jwtToken = JWT.create()
+                .withSubject(userDetails.getEmail())
+                .withExpiresAt(Date.from(now.plusSeconds(Long.parseLong(expirationTime))))
+                .sign(Algorithm.HMAC256(tokenSecret));
+
         response.addHeader("token", jwtToken);
         response.addHeader("userId", userDetails.getUserPublicId());
     }
